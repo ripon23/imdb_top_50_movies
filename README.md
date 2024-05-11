@@ -7,11 +7,9 @@ Top 50 movies list. The scraper should be robust, handling concurrent requests e
 packaged in a Docker container for deployment.
 
 ### Problem Description:
-● The scraper must target the IMDb "Top 50" movies list at this URL: IMDb Top 50 Movies.
-● Extract the movie name, year of release, director, and main stars from each movie’s detail
-page linked from the Top 50 list.
-● The scraper must manage concurrent requests and comply with IMDb’s robots.txt to
-respect their scraping policies.
+* The scraper must target the IMDb "Top 50" movies list at this URL: IMDb Top 50 Movies.
+* Extract the movie name, year of release, director, and main stars from each movie’s detail page linked from the Top 50 list.
+* The scraper must manage concurrent requests and comply with IMDb’s robots.txt to respect their scraping policies.
 
 
 ## Run
@@ -41,11 +39,11 @@ Unidecode is not a replacement for fully supporting Unicode for strings in your 
 
 ## Extracted information
 
-IMDb Scraper extracts the following attributes from IMDb websites. Also, have a look at an examplary [json](https://github.com/santhoshse7en/IMDb_Scraper/blob/master/example/sample.json) and [CSV](https://github.com/santhoshse7en/IMDb_Scraper/blob/master/example/sample.csv) file extracted by IMDb Scraper.
+IMDb Scraper extracts the following attributes from IMDb websites.
 
 * Movie Name
 * Released Year
-* Director
+* Director Name
 * Stars Name
 
 ## Install dependencies

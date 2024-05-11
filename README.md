@@ -22,8 +22,8 @@ respect their scraping policies.
 
 ```python
 
->> python3 -m venv venv
->> . ./venv/bin/activate
+python3 -m venv venv
+. ./venv/bin/activate
 
 ```
 
@@ -39,7 +39,7 @@ It often happens that you have text data in Unicode, but you need to represent i
 
 Unidecode is not a replacement for fully supporting Unicode for strings in your program. There are a number of caveats that come with its use, especially when its output is directly visible to users. Please read the rest of this README before using Unidecode in your project.
 
-### Extracted information
+## Extracted information
 
 IMDb Scraper extracts the following attributes from IMDb websites. Also, have a look at an examplary [json](https://github.com/santhoshse7en/IMDb_Scraper/blob/master/example/sample.json) and [CSV](https://github.com/santhoshse7en/IMDb_Scraper/blob/master/example/sample.csv) file extracted by IMDb Scraper.
 
@@ -48,7 +48,7 @@ IMDb Scraper extracts the following attributes from IMDb websites. Also, have a 
 * Director
 * Stars Name
 
-### Install dependencies
+## Install dependencies
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install following
 
@@ -62,15 +62,16 @@ pip install -r requirements.txt
 
 ```python
 
->> scrapy crawl imdb_topmovies
+scrapy crawl imdb_topmovies
+
 ```
 
 **Save the output as a file**
 
 ```python
 
->> scrapy crawl imdb_topmovies -o output.json
+scrapy crawl imdb_topmovies -o output.json
 
->> scrapy crawl imdb_topmovies -o output.csv
+scrapy crawl imdb_topmovies -o output.csv
 
 ```

@@ -26,16 +26,16 @@ python3 -m venv venv
 ```
 
 
-## Dependencies
+## library & Usages
 
 ### Scrapy
 
-An open source and collaborative framework for extracting the data you need from websites. In a fast, simple, yet extensible way.
+An open source and collaborative framework for extracting the data you need from websites. In a fast, simple, yet extensible way. In this project Scrapy is the main library to scrape web pages.
 
 ### Unidecode
 It often happens that you have text data in Unicode, but you need to represent it in ASCII. For example when integrating with legacy code that doesn’t support Unicode, or for ease of entry of non-Roman names on a US keyboard, or when constructing ASCII machine identifiers from human-readable Unicode strings that should still be somewhat intelligible. A popular example of this is when making an URL slug from an article title.
 
-Unidecode is not a replacement for fully supporting Unicode for strings in your program. There are a number of caveats that come with its use, especially when its output is directly visible to users. Please read the rest of this README before using Unidecode in your project.
+Unidecode is not a replacement for fully supporting Unicode for strings in your program. There are a number of caveats that come with its use, especially when its output is directly visible to users. Please read the rest of this README before using Unidecode in your project. In this project helper function (helpers.py) use it
 
 ## Extracted information
 
@@ -126,3 +126,99 @@ This command will start a Docker container based on the scrapy-imdb image, and y
 Make sure to replace scrapy-imdb with your desired image name and tag.
 
 That's it! Your Scrapy scraper is now packaged within a Docker container, making it portable and easy to deploy across different environments.
+
+## Deployment Using Docker and Kubernetes
+
+### Step 1: Write Dockerfile
+We can use previously create docker file
+
+### Step 2: Create Kubernetes Manifest Files 
+Deployment (deployment.yaml)
+```bash
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scraper-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: scraper
+  template:
+    metadata:
+      labels:
+        app: scraper
+    spec:
+      containers:
+      - name: scraper-container
+        image: yourdockerhubusername/yourimage:latest
+        ports:
+        - containerPort: 80
+```
+
+Service (service.yaml)
+```bash
+apiVersion: v1
+kind: Service
+metadata:
+  name: scraper-service
+spec:
+  selector:
+    app: scraper
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
+```
+
+Horizontal Pod Autoscaler (HPA) (hpa.yaml)
+```bash
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: scraper-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: scraper-deployment
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: 50
+```
+
+### Step 3: Set up AWS EKS Cluster
+Follow the AWS documentation to set up an EKS cluster: [Amazon EKS Documentation](https://docs.aws.amazon.com/eks/latest/userguide/create-cluster.html)
+
+### Step 4: Deploy to AWS EKS Cluster
+Build your Docker image: docker build -t yourdockerhubusername/yourimage:latest .
+Push the Docker image to Docker Hub: docker push yourdockerhubusername/yourimage:latest
+Apply the Kubernetes manifest files: kubectl apply -f deployment.yaml -f service.yaml -f hpa.yaml
+
+### Step 5: Configure Kubernetes Secrets
+Create a Kubernetes Secret to handle sensitive configurations like API keys or database credentials:
+
+```bash
+apiVersion: v1
+kind: Secret
+metadata:
+  name: scraper-secrets
+type: Opaque
+data:
+  api-key: <base64_encoded_api_key>
+  db-password: <base64_encoded_db_password>
+```
+
+Apply the secret: kubectl apply -f secrets.yaml
+
+### Step 6: Test and Monitor
+Test your deployed service by accessing the LoadBalancer's endpoint. Monitor logs using kubectl logs command and monitor the HPA behavior using kubectl describe hpa scraper-hpa.
+
+### Author: 
+* Name: Zahidul Hossein Ripon
+* Email: [riponmailbox@gmail.com](mailto:riponmailbox@gmail.com)

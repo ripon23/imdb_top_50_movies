@@ -1,6 +1,7 @@
 import scrapy
 from scrapy import Selector
 from ..items import IMDbYearItem
+
 class IMDBSpider(scrapy.Spider):
     name = 'imdb_topmovies'
 
@@ -21,6 +22,7 @@ class IMDBSpider(scrapy.Spider):
         data['year_of_release'] = response.xpath('//*[@id="__next"]/main/div/section[1]/section/div[3]/section/section/div[2]/div[1]/ul/li[1]/a/text()').get()        
         stars_parent_element = response.xpath('//a[contains(text(), "Stars")]/parent::li').extract_first()        
         stars_parent_selector = Selector(text=stars_parent_element)
-        data['stars'] = stars_string = ', '.join(stars_parent_selector.xpath('.//a[contains(@class, "ipc-metadata-list-item__list-content-item--link")]/text()').extract())         
-        self.log(f'Relevant Elements: {data}')      
+        data['stars'] = ', '.join(stars_parent_selector.xpath('.//a[contains(@class, "ipc-metadata-list-item__list-content-item--link")]/text()').extract())         
+        
+        self.log(f'Movie Elements: {data}')      
         yield data

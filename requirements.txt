@@ -1,3 +1,2 @@
 Scrapy
 Unidecode
-beautifulsoup4

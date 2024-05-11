@@ -28,9 +28,16 @@ respect their scraping policies.
 ```
 
 
-### Dependencies
+## Dependencies
 
-* Scrapy
+### Scrapy
+
+An open source and collaborative framework for extracting the data you need from websites. In a fast, simple, yet extensible way.
+
+### Unidecode
+It often happens that you have text data in Unicode, but you need to represent it in ASCII. For example when integrating with legacy code that doesn’t support Unicode, or for ease of entry of non-Roman names on a US keyboard, or when constructing ASCII machine identifiers from human-readable Unicode strings that should still be somewhat intelligible. A popular example of this is when making an URL slug from an article title.
+
+Unidecode is not a replacement for fully supporting Unicode for strings in your program. There are a number of caveats that come with its use, especially when its output is directly visible to users. Please read the rest of this README before using Unidecode in your project.
 
 ### Extracted information
 
@@ -47,8 +54,7 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install followi
 
 ```python
 
->> pip install -r requirements.txt
->> pip install scrapy
+pip install -r requirements.txt
 
 ```
 

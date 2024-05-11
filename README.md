@@ -85,3 +85,44 @@ scrapy crawl imdb_topmovies -o output.json
 scrapy crawl imdb_topmovies -o output.csv
 
 ```
+
+### 1. Create a Dockerfile:
+Create a file named Dockerfile in the root directory of your Scrapy project with the following content:
+
+```bash
+# Use an official Python runtime as a parent image
+FROM python:3.9
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+# Install any needed dependencies specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Run the Scrapy spider when the container launches
+CMD scrapy crawl imdb_topmovies
+```
+### 2. Build the Docker image:
+
+Open a terminal/command prompt, navigate to the directory containing your Dockerfile and Scrapy project, and run the following command to build the Docker image:
+
+```bash
+docker build -t scrapy-imdb .
+```
+This command will build a Docker image named scrapy-imdb based on the instructions in your Dockerfile.
+
+### 3. Run the Docker container:
+
+Once the image is built, you can run a Docker container based on that image using the following command:
+
+```bash
+docker run -it scrapy-imdb
+```
+This command will start a Docker container based on the scrapy-imdb image, and your Scrapy spider will start crawling IMDb's top movies.
+
+Make sure to replace scrapy-imdb with your desired image name and tag.
+
+That's it! Your Scrapy scraper is now packaged within a Docker container, making it portable and easy to deploy across different environments.

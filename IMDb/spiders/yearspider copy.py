@@ -8,49 +8,55 @@ from .helpers import catch, digits, unicode
 
 
 class YearSpider(scrapy.Spider):
-    name = "imdb_year"
+    name = "imdb_year22"
 
     allowed_domains = ["www.imdb.com"]
 
-    page_number = 251
+    page_number = 5
 
     def __init__(self, title_type=None, year=None, *args, **kwargs):
+        #print("============================ Test 1 ==========================")
         if title_type and year is None:
             raise ValueError("Title Type & Year are required")
-
+        #print("============================ Test 2 ==========================")
         super(YearSpider, self).__init__(*args, **kwargs)
         self.start_urls = [
-            "https://www.imdb.com/search/title/?title_type=%s&release_date=%s-01-01,%s-12-31&count=250" % (title_type, year, year)]
+            "https://www.imdb.com/chart/top/?ref_=nv_mv_250"]
         self.title_type = title_type
         self.year = year
+        #print("============================ Test 3 ==========================")
 
     def parse(self, response):
-        print("----------------------- Start --------------------------")
+
+        print("============================ Start ==========================")
         items = IMDbYearItem()
-
+        
         content_tag = response.css('li.ipc-metadata-list-summary-item').extract()
+        #print(content_tag)                
 
-        titles = max([digits(tag) for tag in response.css(
-            'a[class=ipc-title-link-wrapper] h3.ipc-title__text').get().split(' ') if digits(tag) is not None])
+        #content_tag = response.css('h3.ipc-title__text::text').extract()
+        #print(content_tag, "------------------")
 
-        print('--------------- Titles:',titles)
-        total_titles = round(titles / 250) + 2
+        # titles = max([digits(tag) for tag in response.css(
+        #     'div[class=desc] span::text').get().split(' ') if digits(tag) is not None])
+        desc_text = response.css('div.desc span::text').get()
+        if desc_text:
+            titles = max([digits(tag) for tag in desc_text.split(' ') if digits(tag) is not None])
+
+        print("======= Titals===========", titles)
+
+        total_titles = round(titles / 5) + 2
 
         total_pages = max(
-            [1] + [(num * 250) + 1 for num in range(1, total_titles)])
+            [1] + [(num * 5) + 1 for num in range(1, total_titles)])
 
         soup = BeautifulSoup(response.text, 'lxml')
-
-        #print('--------------- soup--------:',soup)
 
         cast_crew = soup.find_all('p', class_="")
 
         for fcc, tag in zip(cast_crew, content_tag):
 
-            items['movie_name'] = unicode(
-                tag.css('h3[class=lister-item-header] a::text').get())
-            print("===== Movie Name:", items['movie_name'])
-
+            items['movie_name'] = tag.css('h3::text').get()
             items['movie_id'] = catch('None', lambda: unicode(
                 tag.css('h3[class=lister-item-header] a::attr(href)').get()[7:-16]))
             items['movie_url'] = catch('None', lambda: "%s%s" % (
@@ -108,8 +114,12 @@ class YearSpider(scrapy.Spider):
                     'https://www.imdb.com', unicode(cast['href'][:-18])) for cast in fcc.select('a')])
 
             yield items
+            self.movie_count = len(items)
+            if self.movie_count >= 3:
+                self.logger.info("Reached top 10 movies, stopping spider.")
+                raise scrapy.exceptions.CloseSpider(reason="Reached top 3 movies")
 
-        next_page = "https://www.imdb.com/search/title/?title_type=%s&release_date=%s-01-01,%s-12-31&start=%s&count=250&ref_=adv_nxt" % (self.title_type, self.year, self.year, YearSpider.page_number)
-        if YearSpider.page_number <= total_pages:
-            YearSpider.page_number += 250
-            yield response.follow(next_page, callback = self.parse)
+        # next_page = "https://www.imdb.com/search/title/?title_type=feature&release_date=2020-01-01,2024-12-31&count=5"
+        # if YearSpider.page_number <= total_pages:
+        #     YearSpider.page_number += 5
+        #     yield response.follow(next_page, callback = self.parse)

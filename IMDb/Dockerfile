@@ -12,3 +12,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Run the Scrapy spider when the container launches
 CMD scrapy crawl imdb_topmovies
+

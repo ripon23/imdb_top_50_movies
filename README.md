@@ -46,6 +46,18 @@ IMDb Scraper extracts the following attributes from IMDb websites.
 * Director Name
 * Stars Name
 
+## Managing concurrent requests & robots.txt
+For managing concurrent requests and comply with IMDb’s robots.txt to respect their scraping policies there is a setting file & we enable following 2 line
+```python
+# Obey robots.txt rules
+ROBOTSTXT_OBEY = True
+
+# Configure maximum concurrent requests performed by Scrapy (default: 16)
+CONCURRENT_REQUESTS = 32
+
+```
+
+
 ## Install dependencies
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install following
